@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="processing-1.2.3.min.js"></script>
+<link rel="stylesheet" href="style.css"/></head>
+<body><h1><a href="http://ejohn.org/blog/processingjs/">Processing.js</a></h1>
+<h2>BeestLeg</h2>
+
+<p><a href="http://www.strandbeest.com/beests_leg.php"> Theo Jansen's Strandbeest</a><br>
+
+<script type="application/processing">
+
+float angle1 = 0.0;
+
+float d_a = 38.0;
+float d_b = 41.5;
+float d_c = 39.3;
+float d_d = 40.1;
+float d_e = 55.8;
+float d_f = 39.4;
+float d_g = 36.7;
+float d_h = 65.7;
+float d_i = 49.0;
+float d_j = 50.0;
+float d_k = 61.9;
+float d_l = 7.8;
+float d_m = 15.0;
+
+void setup() {
+  size(320, 180);
+  smooth(); 
+  strokeWeight(4);
+  stroke(160);
+}
+
+void draw() {
+  background(10);
+  
+  angle1 -= radians(3.0);
+  angle1 %= TWO_PI;
+  
+  leg(100, 72);
+  leg(220, 72);
+}
+
+void leg(float x0, float y0){
+  
+  float x1 = x0 + d_a;
+  float y1 = y0;
+  line(x0, y0, x1, y1);
+
+  float x2 = x1;
+  float y2 = y1 - d_l;
+  line(x1, y1, x2, y2);
+
+  float x3 = x2 + d_m * cos(angle1);
+  float y3 = y2 + d_m * sin(angle1);
+  line(x2, y2, x3, y3);
+
+  float d_0_3 = dist(x0, y0, x3, y3);
+  float d_1_3 = dist(x1, y1, x3, y3);
+  
+  float[] ang1 = heron(d_a, d_1_3, d_0_3);
+  float[] ang2 = heron(d_0_3, d_j, d_b);
+
+  float angle2 = 0.0;
+  if(y3 < y0){
+    angle2 = ang1[1] + ang2[1];
+  }else{
+    angle2 = ang2[1] - ang1[1];
+  }
+  float x4 = x0 + d_b * cos(-1 * angle2);
+  float y4 = y0 + d_b * sin(-1 * angle2);
+  line(x0, y0, x4, y4);
+  line(x3, y3, x4, y4);
+
+  float[] ang3 = heron(d_e, d_d, d_b);
+  float angle3 = angle2 + ang3[0];
+  float x5 = x0 + d_d * cos(-1 * angle3);
+  float y5 = y0 + d_d * sin(-1 * angle3);
+  line(x0, y0, x5, y5);
+  line(x5, y5, x4, y4);
+
+  float[] ang4 = heron(d_c, d_k, d_0_3);
+  float angle4 = 0.0;
+  if(y3 < y0){
+    angle4 = ang4[1] - ang1[1];
+  }else{
+    angle4 = ang4[1] + ang1[1];
+  }
+  float x6 = x0 + d_c * cos(angle4);
+  float y6 = y0 + d_c * sin(angle4);
+  line(x0, y0, x6, y6);
+  line(x3, y3, x6, y6);
+
+  float d_5_6 = dist(x5, y5, x6, y6);
+  float[] ang5 = heron(d_d, d_5_6, d_c);
+  float[] ang6 = heron(d_f, d_g, d_5_6);
+  float angle5 = ang5[0] + ang6[0];
+
+  pushMatrix();
+//  segment(x, y, angle4, d_c); //c
+  translate(x0, y0);
+  rotate(angle4);
+  segment(d_c, 0, -angle5, -d_g); // g
+  segment(-d_g, 0, -ang6[2], d_f); // f
+  popMatrix();
+
+  float[] ang7 = heron(d_h, d_i, d_g);
+  pushMatrix();
+//  segment(x, y, angle4, d_c); //c
+  translate(x0, y0);
+  rotate(angle4);
+  segment(d_c, 0, -angle5-ang7[0], -d_i); // i
+  segment(-d_i, 0, -ang7[2], d_h); // h
+  popMatrix();
+
+}
+
+float[] heron(float a, float b, float c) {
+  float[] ang = new float[3];
+  float _s = (a + b + c) / 2.0;
+  float s = sqrt( _s * (_s - a) * (_s - b) * (_s - c) );
+  float h = 0.0;
+  if(a >= b && a >= c){
+    h = 2.0 * s / a;
+    ang[1] = asin(h/c);
+    ang[2] = asin(h/b);
+    ang[0] = PI - ang[1] - ang[2];
+  }
+  else if(b >= c && b >= a){
+    h = 2.0 * s / b;
+    ang[2] = asin(h/a);
+    ang[0] = asin(h/c);
+    ang[1] = PI - ang[0] - ang[2];
+  }
+  else if(c >= a && c >= b){
+    h = 2.0 * s / c;
+    ang[0] = asin(h/b);
+    ang[1] = asin(h/a);
+    ang[2] = PI - ang[0] - ang[1];
+  }
+  return ang;
+}
+
+void segment(float x, float y, float a, float len) {
+  translate(x, y);
+  rotate(a);
+  line(0, 0, len, 0);
+}
+</script>
+
+<canvas width="320" height="180"></canvas></p>
+
+<div style="height:0px;width:0px;overflow:hidden;"></div>
+
+</body>
+</html>
