@@ -34,8 +34,10 @@ void setup() {
 }
 
 void draw() {
-  background(10);
-  
+//  background(10);
+  fill(10, 12);
+  rect(0, 0, width, height);
+
   angle1 -= radians(3.0);
   angle1 %= TWO_PI;
   
@@ -47,15 +49,15 @@ void leg(float x0, float y0){
   
   float x1 = x0 + d_a;
   float y1 = y0;
-  line(x0, y0, x1, y1);
+//  line(x0, y0, x1, y1);
 
   float x2 = x1;
   float y2 = y1 - d_l;
-  line(x1, y1, x2, y2);
+//  line(x1, y1, x2, y2);
 
   float x3 = x2 + d_m * cos(angle1);
   float y3 = y2 + d_m * sin(angle1);
-  line(x2, y2, x3, y3);
+//  line(x2, y2, x3, y3);
 
   float d_0_3 = dist(x0, y0, x3, y3);
   float d_1_3 = dist(x1, y1, x3, y3);
