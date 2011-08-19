@@ -10,6 +10,11 @@
 
 <script type="application/processing">
 
+/**
+ * strand beast leg 
+ * 
+*/
+
 float angle1 = 0.0;
 
 float d_a = 38.0;
@@ -34,30 +39,30 @@ void setup() {
 }
 
 void draw() {
-//  background(10);
+//  background(226, 10);
   fill(10, 12);
-  rect(0, 0, width, height);
-
+  rect(0,0,width,height);
+  
   angle1 -= radians(3.0);
   angle1 %= TWO_PI;
   
-  leg(100, 72);
-  leg(220, 72);
+  leg(width/2-d_a, 72, 1);
+  leg(width/2+d_a, 72, -1);
 }
 
-void leg(float x0, float y0){
-  
-  float x1 = x0 + d_a;
+
+void leg(float x0, float y0, int sign){
+  float x1 = x0 + sign * d_a;
   float y1 = y0;
-//  line(x0, y0, x1, y1);
+  line(x0, y0, x1, y1);
 
   float x2 = x1;
   float y2 = y1 - d_l;
-//  line(x1, y1, x2, y2);
+  if(sign > 0) line(x1, y1, x2, y2);
 
   float x3 = x2 + d_m * cos(angle1);
   float y3 = y2 + d_m * sin(angle1);
-//  line(x2, y2, x3, y3);
+  if(sign > 0) line(x2, y2, x3, y3);
 
   float d_0_3 = dist(x0, y0, x3, y3);
   float d_1_3 = dist(x1, y1, x3, y3);
@@ -71,14 +76,14 @@ void leg(float x0, float y0){
   }else{
     angle2 = ang2[1] - ang1[1];
   }
-  float x4 = x0 + d_b * cos(-1 * angle2);
+  float x4 = x0 + d_b * cos(-1 * angle2) * sign;
   float y4 = y0 + d_b * sin(-1 * angle2);
   line(x0, y0, x4, y4);
   line(x3, y3, x4, y4);
 
   float[] ang3 = heron(d_e, d_d, d_b);
   float angle3 = angle2 + ang3[0];
-  float x5 = x0 + d_d * cos(-1 * angle3);
+  float x5 = x0 + d_d * cos(-1 * angle3) * sign;
   float y5 = y0 + d_d * sin(-1 * angle3);
   line(x0, y0, x5, y5);
   line(x5, y5, x4, y4);
@@ -90,7 +95,7 @@ void leg(float x0, float y0){
   }else{
     angle4 = ang4[1] + ang1[1];
   }
-  float x6 = x0 + d_c * cos(angle4);
+  float x6 = x0 + d_c * cos(angle4) * sign;
   float y6 = y0 + d_c * sin(angle4);
   line(x0, y0, x6, y6);
   line(x3, y3, x6, y6);
@@ -101,22 +106,26 @@ void leg(float x0, float y0){
   float angle5 = ang5[0] + ang6[0];
 
   pushMatrix();
-//  segment(x, y, angle4, d_c); //c
   translate(x0, y0);
-  rotate(angle4);
-  segment(d_c, 0, -angle5, -d_g); // g
-  segment(-d_g, 0, -ang6[2], d_f); // f
+  if(sign > 0)
+  	rotate(angle4);
+  else
+	rotate(PI - angle4)
+  segment(d_c, 0, -sign * angle5, -d_g); // g
+  segment(-d_g, 0, -sign * ang6[2], d_f); // f  
   popMatrix();
 
   float[] ang7 = heron(d_h, d_i, d_g);
-  pushMatrix();
-//  segment(x, y, angle4, d_c); //c
-  translate(x0, y0);
-  rotate(angle4);
-  segment(d_c, 0, -angle5-ang7[0], -d_i); // i
-  segment(-d_i, 0, -ang7[2], d_h); // h
-  popMatrix();
 
+  pushMatrix();
+  translate(x0, y0);
+  if(sign > 0)
+  	rotate(angle4);
+  else
+	rotate(PI - angle4);
+  segment(d_c, 0, -sign*(angle5+ang7[0]), -d_i); // i
+  segment(-d_i, 0, -sign*ang7[2], d_h); // h
+  popMatrix();
 }
 
 float[] heron(float a, float b, float c) {
